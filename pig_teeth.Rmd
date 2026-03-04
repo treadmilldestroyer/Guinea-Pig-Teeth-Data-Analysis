@@ -1,0 +1,14 @@
+---
+title: "Pig Teeth"
+output: html_document
+date: "2026-03-04"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Questions I will be answering in this program:
+# 1. Does vitamin C help in tooth growth in guinea pigs?
+# 2. Which method of vitamin C intake is better, ascorbic acid or orange juice?
+
+
