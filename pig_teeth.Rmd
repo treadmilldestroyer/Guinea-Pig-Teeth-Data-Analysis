@@ -1,15 +1,101 @@
 ---
-title: "Pig Teeth"
+title: "Tooth Growth Data Analysis"
+author: "Aaron Arnold"
 output: html_document
-date: "2026-03-04"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE
+  )
 ```
+
+```{r}
 # Questions I will be answering in this program:
 # 1. Does vitamin C help in tooth growth in guinea pigs?
 # 2. Which method of vitamin C intake is better, ascorbic acid or orange juice?
 
+# Libraries needed
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(kableExtra)
 
-# Test 123
+
+tg <- (ToothGrowth)
+
+ggplot(tg, aes(x=as.factor(dose), y=len, fill=supp)) + geom_boxplot() + labs(title="Tooth Growth by Dose and Supplement Type", x="Dose (mg/day)", y="Tooth Length (microns)", fill="Supplement")
+```
+
+This graph is a box plot of the original data from the ToothGrowth data set.
+
+<br>
+<br>
+```{r}
+# This r-block is going to be my filter.
+# I will be filtering out the outliers in the ToothGrowth box plot.
+
+Dose0.5Filter <- filter(ToothGrowth, dose == 0.5)
+
+Dose1_VC <- filter(tg, dose == 1 & supp == "VC" & len <= 19)
+Dose1_OJ <- filter(tg, dose == 1 & supp =="OJ")
+
+Dose2_VC <- filter(tg, dose == 2 & supp =="VC")
+Dose2_OJ <- filter(tg, dose == 2 & supp == "OJ" & len <= 29)
+
+CleanTGData <- rbind(Dose0.5Filter, Dose1_VC, Dose1_OJ, Dose2_VC, Dose2_OJ)
+
+# View(CleanTGData)
+ggplot(CleanTGData, aes(x=as.factor(dose), y=len, fill=supp)) + geom_boxplot() + labs(title="Tooth Growth by Dose and Supplement Type (Without Outliers)", x="Dose (mg/day)", y="Tooth Length (microns)", fill="Supplement")
+```
+
+This graph shows the same data as the previous graph except in this one, three outliers were removed to provide a more clear analysis.  
+<br>
+<br>
+
+::: {style="display: flex; gap: 20px;"}
+```{r, echo=FALSE}
+# This r-block is going to be my sort.
+# I will be sorting all of the data points in ToothGrowth in ascending and descending order of the Tooth Length.
+
+AscendingOrder <- arrange(tg, len)
+DescendingOrder <- arrange(tg, desc(len))
+
+# Table 1: Shortest
+kable(AscendingOrder, row.names = FALSE, caption = "Shortest Teeth First") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE) %>%
+  scroll_box(width = "100%", height = "400px")
+
+# Table 2: Longest
+kable(DescendingOrder, row.names = FALSE, caption = "Longest Teeth First") %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE) %>%
+  scroll_box(width = "100%", height = "400px")
+
+```
+:::
+<div style="clear: both;"></div>
+<br>
+<br>
+```{r}
+# This r-block is going to be my aggregation.
+# I will be taking the average of all the OJ and all of the VC and comparing the two.
+
+OJ_Filter <- filter(tg, supp == "OJ") 
+VC_Filter <- filter(tg, supp =="VC")
+
+OJ_Average <- mean(OJ_Filter$len)
+VC_Average <- mean(VC_Filter$len)
+
+Total_Averages <- data.frame(supp = c("OJ", "VC"), average_len = c(OJ_Average, VC_Average))
+
+ggplot(Total_Averages, aes(x = supp, y = average_len, fill = supp)) + geom_col() + labs(title = "Average Tooth Growth by Supplement", x = "Supplement Type", y = "Average Tooth Length (microns)", fill="Supplement")
+```
+<br>
+<br>
+  Here we can see that organge juice (OJ) is on average a better choice for tooth growth.  
+  While both supplement types are good, if you were in a pinch, I would recommend using orange juice.
+<br>
+<br>
+
