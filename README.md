@@ -33,7 +33,7 @@ To recreate the development environment, you need the following software and/or 
 I found these websites useful in developing this software:
 
 * [Gemini](https://gemini.google.com/u/0/app)
-* My wife - BYUI website for R
+* [BYUI Stats Github Notebook](https://byuistats.github.io/Statistics-Notebook/)
 
 ## Future Work
 
